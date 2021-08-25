@@ -1,11 +1,11 @@
 package binance.services;
 
+
+
 import binance.dto.StatusExchangerDto;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.client.RestTemplate;
 
 
-@SpringBootApplication
 public class StatusApi {
     private RestTemplate restTemplate = new RestTemplate();
 
