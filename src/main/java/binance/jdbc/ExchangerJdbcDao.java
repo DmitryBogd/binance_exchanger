@@ -8,8 +8,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Date;
 
 @Component
 @Repository
@@ -25,10 +27,11 @@ public class ExchangerJdbcDao {
     }
 
     public void addStatus(StatusExchangerDto statusExchangerDto){
-        jdbcTemplate.update("INSERT INTO binance VALUES(1,?,?,?)",
+        Date date = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss") ;
+        jdbcTemplate.update("INSERT INTO binance VALUES(DEFAULT,?,?,?)",
                 statusExchangerDto.getMsg(),
-                statusExchangerDto.getStatus(),
-                LocalDate.now() + LocalTime.now().toString());
+                statusExchangerDto.getStatus(), format.format(date));
     }
 
 }

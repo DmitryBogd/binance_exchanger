@@ -1,8 +1,10 @@
 package binance.dto;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode
 public class StatusExchangerDto {
     private int status;
     private String msg;

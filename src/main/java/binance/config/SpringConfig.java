@@ -7,6 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
 
@@ -35,5 +36,10 @@ public class SpringConfig {
     @Bean
     public JdbcTemplate jdbcTemplate() {
         return new JdbcTemplate(mysqlDataSource());
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 }
