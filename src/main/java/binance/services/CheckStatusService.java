@@ -17,7 +17,7 @@ public class CheckStatusService {
     @Autowired
     ExchangerJdbcDao exchangerJdbcDao;
 
-    @Scheduled(fixedRate = 50000)
+    @Scheduled(fixedRate = 500000)
     public void checkStatus(){
         StatusExchangerDto freshStatusApi = statusApi.getStatus();
         if(!freshStatusApi.equals(exchangerJdbcDao.getLastStatus())) {
