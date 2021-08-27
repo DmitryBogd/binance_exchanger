@@ -25,11 +25,11 @@ public class SpringDataApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        System.out.println(exchangerJdbcDao.getLastStatus().getStatus());
+        System.out.println(exchangerJdbcDao.getLastStatus());
 
-        System.out.println(binaryAutoService.getStatus().getMsg());
+        System.out.println(binaryAutoService.getStatus());
 
-        System.out.println(binaryAutoService.GetOrderBook(depthSymbol, depthLimit).toString());
+        System.out.println(binaryAutoService.getOrderBook(depthSymbol, depthLimit).toString());
 
         System.out.println(binaryAutoService.getMetadata());
     }
