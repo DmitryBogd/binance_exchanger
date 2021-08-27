@@ -5,10 +5,12 @@ import binance.dto.*;
 import binance.dto.MetadataDto;
 import binance.exceptions.ThereIsNoSuchSymbolException;
 import binance.interfaces.GetOrderBookDao;
+import binance.jobs.CheckStatusJob;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import retrofit2.Call;
@@ -20,13 +22,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static binance.constants.Сonstants.*;
 
 @Component
-@AllArgsConstructor
 public class BinaryAutoService {
 
-    private final RestTemplate restTemplate;
+    private final RestTemplate restTemplate = new RestTemplate();
+    private final Logger logger = LoggerFactory.getLogger(CheckStatusJob.class);
 
 
     public List<MetadataDto> getMetadata() throws Exception {
@@ -46,7 +47,7 @@ public class BinaryAutoService {
 //    --------------------------------------------------------------------------
 
         List<MetadataDto> metadataDtoList = new ArrayList<>();
-        String rawJson = networkDao.request(urlExchangeInfo);
+        String rawJson = networkDao.request("https://api.binance.com/api/v3/exchangeInfo");
         //get json
         JSONObject root = new JSONObject(rawJson);
         //looking for an array "symbols" to choose jsonObject
@@ -110,9 +111,10 @@ public class BinaryAutoService {
     }
 
     public StatusExchangerDto getStatus() {
-        StatusExchangerDto response = restTemplate.getForObject(urlStatus, StatusExchangerDto.class);
+        StatusExchangerDto response = restTemplate.getForObject("https://api.binance.com/sapi/v1/system/status", StatusExchangerDto.class);
         assert response != null;
         if (response.getMsg() == null) {
+            logger.error("Introduced non-existent symbol");
             throw new ThereIsNoSuchSymbolException();
         }
         return response;

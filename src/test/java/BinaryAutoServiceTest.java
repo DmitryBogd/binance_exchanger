@@ -6,14 +6,12 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 
-import static binance.constants.Сonstants.depthSymbol;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @AllArgsConstructor
 public class BinaryAutoServiceTest {
-   private final RestTemplate restTemplate = new RestTemplate();
-    private final BinaryAutoService binaryAutoService = new BinaryAutoService(restTemplate);
+    private final BinaryAutoService binaryAutoService = new BinaryAutoService();
 
     @Test
     public void getStatusNotNullValue(){
@@ -22,7 +20,7 @@ public class BinaryAutoServiceTest {
 
     @Test
     public void getOrderBookNotNullValue() throws IOException {
-        assertThat(binaryAutoService.getOrderBook(depthSymbol, 5).getAsks(), notNullValue());
+        assertThat(binaryAutoService.getOrderBook("ETHBTC", 5).getAsks(), notNullValue());
     }
 
     @Test
