@@ -1,4 +1,4 @@
-package binance.jdbc;
+package binance.dao;
 
 import binance.dto.ExchangerMapper;
 import binance.dto.StatusExchangerDto;
@@ -13,17 +13,16 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Date;
 
-@Component
 @Repository
 @AllArgsConstructor
 public class ExchangerJdbcDao {
 
-    @Autowired
-    JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     public StatusExchangerDto getLastStatus(){
         return jdbcTemplate.query("Select * FROM binance WHERE id=(SELECT MAX(id) FROM binance)", new ExchangerMapper())
                 .stream().findAny().orElse(null);
+
     }
 
     public void addStatus(StatusExchangerDto statusExchangerDto){

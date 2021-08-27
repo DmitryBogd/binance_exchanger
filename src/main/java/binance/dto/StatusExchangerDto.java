@@ -1,20 +1,15 @@
 package binance.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Data
-@EqualsAndHashCode
+@AllArgsConstructor
+@NoArgsConstructor
 public class StatusExchangerDto {
     private int status;
     private String msg;
-
-    public StatusExchangerDto(int status, String msg) {
-        this.status = status;
-        this.msg = msg;
-    }
-
-    public StatusExchangerDto(){
-    }
 
 }
