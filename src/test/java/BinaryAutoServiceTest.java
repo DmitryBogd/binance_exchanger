@@ -1,8 +1,6 @@
 import binance.services.BinaryAutoService;
 import lombok.AllArgsConstructor;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 
@@ -23,8 +21,5 @@ public class BinaryAutoServiceTest {
         assertThat(binaryAutoService.getOrderBook("ETHBTC", 5).getAsks(), notNullValue());
     }
 
-    @Test
-    public void getMetadataNotNullValue() throws Exception {
-        assertThat(binaryAutoService.getMetadata(), notNullValue());
-    }
+
 }

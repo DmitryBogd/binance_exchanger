@@ -30,5 +30,6 @@ public class SpringDataApplication implements CommandLineRunner {
         System.out.println(binaryAutoService.getOrderBook("ETHBTC", 5).toString());
 
         System.out.println(binaryAutoService.getMetadata());
+
     }
 }

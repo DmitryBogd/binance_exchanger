@@ -1,14 +1,15 @@
 package binance.services;
 
-import binance.dao.NetworkDao;
+import binance.deserializers.CheckInterfaceDeserializer;
 import binance.dto.*;
-import binance.dto.MetadataDto;
+import binance.dto.metadata.SymbolsListDto;
 import binance.exceptions.ThereIsNoSuchSymbolException;
 import binance.interfaces.GetOrderBookDao;
 import binance.jobs.CheckStatusJob;
-import lombok.AllArgsConstructor;
-import org.json.JSONArray;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -19,84 +20,29 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.net.URL;
 
 
 @Component
 public class BinaryAutoService {
-
-    private final RestTemplate restTemplate = new RestTemplate();
     private final Logger logger = LoggerFactory.getLogger(CheckStatusJob.class);
 
+    public SymbolsListDto getMetadata() throws Exception {
+        String requestURL = "https://api.binance.com/api/v3/exchangeInfo";
+        URL wikiRequest = new URL(requestURL);
+        JSONTokener tokener = new JSONTokener(wikiRequest.openStream());
+        JSONObject root = new JSONObject(tokener);
+        GsonBuilder builder = new GsonBuilder();
 
-    public List<MetadataDto> getMetadata() throws Exception {
-        NetworkDao networkDao = new NetworkDao();
-//        Retrofit retrofit = new Retrofit.Builder()
-//                .baseUrl("https://api.binance.com")
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .build();
-//
-//        GetMetadateDAO getMetadateDAO = retrofit.create(GetMetadateDAO.class);
-//
-//       Call<SymbolsListDto> allSymbols =  getMetadateDAO.getAllSymbols();
-//       Response<SymbolsListDto> execute = allSymbols.execute();
-//       SymbolsListDto symbolsListDto = execute.body();
-//       List<SymbolsDto> symbolsDto = symbolsListDto.getSymbols();
-//       return symbolsDto;
-//    --------------------------------------------------------------------------
+        builder.registerTypeAdapter(SymbolsListDto.class, new CheckInterfaceDeserializer());
+        Gson gson = builder.create();
 
-        List<MetadataDto> metadataDtoList = new ArrayList<>();
-        String rawJson = networkDao.request("https://api.binance.com/api/v3/exchangeInfo");
-        //get json
-        JSONObject root = new JSONObject(rawJson);
-        //looking for an array "symbols" to choose jsonObject
-        JSONArray symbols = root.getJSONArray("symbols");
-
-        for(int i =0;i<symbols.length(); i++){
-            MetadataDto metadata = new MetadataDto();
-            //create json object to find variables: "status", "symbol" and array "filters"
-           JSONObject jsonSymbol = symbols.getJSONObject(i);
-
-           if(!jsonSymbol.getString("status").equals("TRADING")){}
-           else {
-
-               for (int k = 0; k < symbols.length(); k++) {
-                   metadata.setCurrencyPair(jsonSymbol.getString("symbol"));
-                   //looking for an array "filters" to choose jsonObject
-                   JSONArray jsonFilters = jsonSymbol.getJSONArray("filters");
-
-                   for (int j = 0; j < jsonFilters.length(); j++) {
-                       //create a json object to search for metadata object variables
-                       JSONObject jsonFilter = jsonFilters.getJSONObject(j);
-
-                       for(int l=0; l<jsonFilter.length();l++) {
-                           if (jsonFilter.has("tickSize")) {
-                               metadata.setCounterPrecision(jsonFilter.getString("tickSize"));
-                           }
-
-                           if (jsonFilter.has("minQty")) {
-                               metadata.setMinBaseAmount(jsonFilter.getString("minQty"));
-                               metadata.setMaxBaseAmount(jsonFilter.getString("maxQty"));
-                               metadata.setBasePrecision(jsonFilter.getString("stepSize"));
-                           }
-
-                           if (jsonFilter.has("minNotional")) {
-                               metadata.setMinCounterAmount(jsonFilter.getString("minNotional"));
-                           }
-                       }
-                   }
-
-               }
-               metadataDtoList.add(metadata);
-           }
-        }
-        return metadataDtoList;
+        SymbolsListDto results = gson.fromJson(String.valueOf(root), SymbolsListDto.class);
+        return results;
 
     }
 
     public OrderBookDto getOrderBook(String symbol, int limit) throws IOException {
-
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.binance.com")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -111,6 +57,7 @@ public class BinaryAutoService {
     }
 
     public StatusExchangerDto getStatus() {
+        RestTemplate restTemplate = new RestTemplate();
         StatusExchangerDto response = restTemplate.getForObject("https://api.binance.com/sapi/v1/system/status", StatusExchangerDto.class);
         assert response != null;
         if (response.getMsg() == null) {
