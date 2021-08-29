@@ -1,9 +1,9 @@
 package binance.services;
 
-import binance.deserializers.CheckInterfaceDeserializer;
+import binance.deserializers.SymbolListDtoDeserializer;
 import binance.dto.*;
 import binance.dto.metadata.SymbolsListDto;
-import binance.exceptions.ThereIsNoSuchSymbolException;
+import binance.exceptions.NoSuchSymbolException;
 import binance.interfaces.GetOrderBookDao;
 import binance.jobs.CheckStatusJob;
 import com.google.gson.Gson;
@@ -34,7 +34,7 @@ public class BinaryAutoService {
         JSONObject root = new JSONObject(tokener);
         GsonBuilder builder = new GsonBuilder();
 
-        builder.registerTypeAdapter(SymbolsListDto.class, new CheckInterfaceDeserializer());
+        builder.registerTypeAdapter(SymbolsListDto.class, new SymbolListDtoDeserializer());
         Gson gson = builder.create();
 
         SymbolsListDto results = gson.fromJson(String.valueOf(root), SymbolsListDto.class);
@@ -49,10 +49,14 @@ public class BinaryAutoService {
                 .build();
 
         GetOrderBookDao getOrderBookDao = retrofit.create(GetOrderBookDao.class);
-        Call<OrderBookDto> orderBookDto =  getOrderBookDao.getOrderBook(limit,symbol);
-        Response<OrderBookDto> execute = orderBookDto.execute();
-        OrderBookDto orderBookDto1 = execute.body();
-        return orderBookDto1;
+        Call<OrderBookDto> orderBookDtoCall =  getOrderBookDao.getOrderBook(limit,symbol);
+        Response<OrderBookDto> execute = orderBookDtoCall.execute();
+        OrderBookDto orderBookDto = execute.body();
+        if(orderBookDto == null){
+            logger.error("Introduced non-existent symbol");
+            throw new NoSuchSymbolException();
+        }
+        return orderBookDto;
 
     }
 
@@ -60,10 +64,6 @@ public class BinaryAutoService {
         RestTemplate restTemplate = new RestTemplate();
         StatusExchangerDto response = restTemplate.getForObject("https://api.binance.com/sapi/v1/system/status", StatusExchangerDto.class);
         assert response != null;
-        if (response.getMsg() == null) {
-            logger.error("Introduced non-existent symbol");
-            throw new ThereIsNoSuchSymbolException();
-        }
         return response;
     }
 }

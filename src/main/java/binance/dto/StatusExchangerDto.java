@@ -11,6 +11,7 @@ import javax.persistence.*;
 @Table(name="binance")
 @ToString
 public class StatusExchangerDto {
+
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private int id;

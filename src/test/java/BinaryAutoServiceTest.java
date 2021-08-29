@@ -1,13 +1,14 @@
+import binance.exceptions.NoSuchSymbolException;
 import binance.services.BinaryAutoService;
-import lombok.AllArgsConstructor;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-@AllArgsConstructor
 public class BinaryAutoServiceTest {
     private final BinaryAutoService binaryAutoService = new BinaryAutoService();
 
@@ -22,4 +23,13 @@ public class BinaryAutoServiceTest {
     }
 
 
+    @Test(expected = NoSuchSymbolException.class)
+    public void getOrderBookThrowNoSuchSymbolException() throws IOException {
+       binaryAutoService.getOrderBook("ERROR", 5);
+    }
+
+    @Test
+    public void getMetadataNotNullValue() throws Exception {
+        assertThat(binaryAutoService.getMetadata(), notNullValue());
+    }
 }

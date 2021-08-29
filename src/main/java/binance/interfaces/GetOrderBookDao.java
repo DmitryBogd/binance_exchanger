@@ -10,4 +10,5 @@ public interface GetOrderBookDao{
 
     @GET("/api/v1/depth?")
     Call<OrderBookDto> getOrderBook(@Query("limit") int limit, @Query("symbol") String symbol);
+
 }
