@@ -22,13 +22,16 @@ public class CheckStatusJob {
 
 
     @Scheduled(fixedRate = 500000)
-    public void checkStatus(){
+    public void checkStatus() {
         StatusExchangerDto freshStatusApi = binaryAutoService.getStatus();
-        if(!freshStatusApi.getMsg().equals(binanceRepository.findMaxId().getMsg())) {
+        if (binanceRepository.findMaxId() == null) {
             binanceRepository.save(freshStatusApi);
-            logger.info("Status changed");
+        } else {
+            if (!freshStatusApi.getMsg().equals(binanceRepository.findMaxId().getMsg())) {
+                binanceRepository.save(freshStatusApi);
+                logger.info("Status changed");
+            } else
+                logger.info("Status checked");
         }
-        else
-            logger.info("Status checked");
     }
 }
