@@ -26,6 +26,7 @@ public class CheckStatusJob {
         StatusExchangerDto freshStatusApi = binaryAutoService.getStatus();
         if (binanceRepository.findMaxId() == null) {
             binanceRepository.save(freshStatusApi);
+            logger.info("Status set");
         } else {
             if (!freshStatusApi.getMsg().equals(binanceRepository.findMaxId().getMsg())) {
                 binanceRepository.save(freshStatusApi);

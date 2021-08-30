@@ -7,11 +7,11 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 import lombok.ToString;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Data
-@ToString
 public class Symbol {
     @Expose
     private String symbol;

@@ -5,6 +5,7 @@ import binance.dto.metadata.filters.MinNotional;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 

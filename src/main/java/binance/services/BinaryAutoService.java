@@ -29,8 +29,8 @@ public class BinaryAutoService {
 
     public SymbolsListDto getMetadata() throws Exception {
         String requestURL = "https://api.binance.com/api/v3/exchangeInfo";
-        URL wikiRequest = new URL(requestURL);
-        JSONTokener tokener = new JSONTokener(wikiRequest.openStream());
+        URL BinanceRequest = new URL(requestURL);
+        JSONTokener tokener = new JSONTokener(BinanceRequest.openStream());
         JSONObject root = new JSONObject(tokener);
         GsonBuilder builder = new GsonBuilder();
 

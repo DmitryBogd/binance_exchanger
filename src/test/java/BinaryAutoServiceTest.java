@@ -1,16 +1,13 @@
 import binance.exceptions.NoSuchSymbolException;
 import binance.services.BinaryAutoService;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
 import java.io.IOException;
-
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+
 public class BinaryAutoServiceTest {
-    private final BinaryAutoService binaryAutoService = new BinaryAutoService();
+    private BinaryAutoService binaryAutoService = new BinaryAutoService();
 
     @Test
     public void getStatusNotNullValue(){
